@@ -1,4 +1,3 @@
-# '//div[@id="xlmain"]//*[name(.)!="style" and name(.)!="script" and name(.)!="img"]/text()'
 from typing import List
 import scrapy
 
@@ -6,8 +5,11 @@ import scrapy
 class XGSSpider(scrapy.Spider):
 
     name = 'xgs'
+    allowed_domains = [
+        'http://www.iie.cas.cn'
+    ]
     start_urls = [
-        'http://www.iie.cas.cn/'
+        'http://www.iie.cas.cn'
     ]
 
     def parse(self, response):
@@ -23,4 +25,4 @@ class XGSSpider(scrapy.Spider):
                     article += '。'
             yield {'article': article}
 
-        
+        page_links = response.xpath('//a')
