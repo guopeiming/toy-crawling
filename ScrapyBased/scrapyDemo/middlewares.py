@@ -101,3 +101,32 @@ class ScrapydemoDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+from scrapy.exceptions import IgnoreRequest
+class MyResponseFilterDownloaderMiddleware:
+    # Not all methods need to be defined. If a method is not defined,
+    # scrapy acts as if the downloader middleware does not modify the
+    # passed objects.
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        # This method is used by Scrapy to create your spiders.
+        s = cls()
+        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        return s
+
+    def process_response(self, request, response, spider):
+        # Called with the response returned from the downloader.
+
+        # Must either;
+        # - return a Response object
+        # - return a Request object
+        # - or raise IgnoreRequest
+        if response.headers['Content-type'] == b'text/html':
+            return response
+        else:
+            raise IgnoreRequest()
+
+    def spider_opened(self, spider):
+        spider.logger.info('Spider opened: %s' % spider.name)
