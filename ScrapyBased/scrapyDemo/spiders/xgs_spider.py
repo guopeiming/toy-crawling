@@ -10,18 +10,20 @@ class XGSSpider(scrapy.Spider):
         'www.iie.cas.cn'
     ]
     start_urls = [
-        # 'http://www.iie.cas.cn/xsjy2020/zxtz2020/202105/t20210526_6040026.html'
         'http://www.iie.cas.cn/',
     ]
 
     def parse(self, response: HtmlResponse):
-        article = self._parse_article(response)
-        if len(article) > 0:
-            yield {'article': article}
+        if response.url.endswith('.html'):
+            article = self._parse_article(response)
+            if len(article) > 0:
+                yield {'article': article}
 
         page_links = response.xpath(
-            '//a[not(contains(@href, ".pdf")) and not(contains(@href, ".doc")) and \
-                 not(starts-with(@href, "mailto:")) and not(contains(@href, "javascript"))]'
+            # '//a[not(contains(@href, ".pdf")) and not(contains(@href, ".doc")) and \
+            #      not(starts-with(@href, "mailto:")) and not(contains(@href, ".jpg")) and \
+            #      not(contains(@href, ".rar")) and not(contains(@href, "javascript"))]'
+            '//a[not(starts-with(@href, "mailto:")) and not(contains(@href, "javascript"))]'
         )
         yield from response.follow_all(page_links, callback=self.parse)
 
@@ -32,8 +34,6 @@ class XGSSpider(scrapy.Spider):
         ).getall()
 
         if len(raw_article) > 0:
-            for i, span in enumerate(raw_article):
+            for span in raw_article:
                 article += span.strip()
-                if i == 0 or i == 2:
-                    article += '。'
         return article

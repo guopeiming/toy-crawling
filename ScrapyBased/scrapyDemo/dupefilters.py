@@ -24,8 +24,8 @@ class MyRFPDupeFilter(BaseDupeFilter):
             return True
         self.fingerprints.add(fp)
 
-    def request_fingerprint(self, request):
-        return hashlib.md5(to_bytes(request.url))
+    def request_fingerprint(self, request) -> str:
+        return hashlib.md5(to_bytes(request.url)).hexdigest()
 
     def close(self, reason):
         msg = "The number of URLs: %(url_num)d"

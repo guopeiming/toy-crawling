@@ -6,8 +6,24 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+import json
 
+class MyPipeline:
 
-class ScrapydemoPipeline:
+    def __init__(self) -> None:
+        self.file = None
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls()
+
+    def open_spider(self, spider):
+        self.file = open('./items.jl', 'w', encoding='utf-8')
+
+    def close_spider(self, spider):
+        self.file.close()
+
     def process_item(self, item, spider):
+        line = json.dumps(item, ensure_ascii=False) + "\n"
+        self.file.write(line)
         return item
