@@ -90,3 +90,7 @@ DOWNLOADER_MIDDLEWARES = {
 
 #========================custom settings=============================
 DUPEFILTER_CLASS = 'scrapyDemo.dupefilters.MyRFPDupeFilter'
+
+ITEM_PIPELINES = {
+    'scrapyDemo.pipelines.MyPipeline': 300,
+}
