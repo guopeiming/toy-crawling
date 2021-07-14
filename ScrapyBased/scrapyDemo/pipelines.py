@@ -24,6 +24,12 @@ class MyPipeline:
         self.file.close()
 
     def process_item(self, item, spider):
-        line = json.dumps(item, ensure_ascii=False) + "\n"
+        line = json.dumps(self._item_cleaning(item), ensure_ascii=False) + "\n"
         self.file.write(line)
+        return item
+
+    def _item_cleaning(self, item):
+        article: str = item['article']
+        article = article.replace('\xa0', '')
+        item['article'] = article
         return item
