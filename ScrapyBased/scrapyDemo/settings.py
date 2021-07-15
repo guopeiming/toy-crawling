@@ -94,3 +94,9 @@ DUPEFILTER_CLASS = 'scrapyDemo.dupefilters.MyRFPDupeFilter'
 ITEM_PIPELINES = {
     'scrapyDemo.pipelines.MyPipeline': 300,
 }
+
+MYSQL_HOST = 'localhost'
+MYSQL_PORT = 6761
+MYSQL_DB_NAME = 'crawling_db'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = 'mysql'

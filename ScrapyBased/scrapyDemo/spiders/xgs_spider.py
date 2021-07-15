@@ -1,3 +1,4 @@
+import time
 from typing import List
 import scrapy
 from scrapy.http import HtmlResponse
@@ -17,7 +18,11 @@ class XGSSpider(scrapy.Spider):
         if response.url.endswith('.html'):
             article = self._parse_article(response)
             if len(article) > 0:
-                yield {'article': article}
+                yield {
+                    'article': article, 'source_site': 'http://www.iie.cas.cn/',
+                    'url': response.headers.url,
+                    'create_time': time.strftime('%Y-%m-%d %H:%M:%S')
+                }
 
         page_links = response.xpath(
             # '//a[not(contains(@href, ".pdf")) and not(contains(@href, ".doc")) and \
