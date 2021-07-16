@@ -15,11 +15,10 @@ class MyPipeline:
     def __init__(self, host, port, database, user, passwd) -> None:
         self.db_conn =pymysql.connect(host=host, port=port, database=database, user=user, passwd=passwd, charset='utf8')
         self.db_cur = self.db_conn.cursor()
-        pymysql.connect()
 
         self.logger = logging.getLogger(__name__)
         msg = "Conneting to mysql: %(host)s:%(port)d %(database)s"
-        args = {'musql': host, 'port': port, 'database': database}
+        args = {'host': host, 'port': port, 'database': database}
         self.logger.info(msg, args)
 
     @classmethod
@@ -46,7 +45,7 @@ class MyPipeline:
     def _item_cleaning(self, item):
         article: str = item['article']
         article = article.replace('\xa0', '')
-        item['article'] = article
+        item['article'] = article[:2000]
         return item
 
     def insert_db(self, item):
@@ -57,10 +56,10 @@ class MyPipeline:
             item['create_time'],
         )
         try:
-            sql = 'INSERT INTO articles VALUES(%s,%s,%s,%s)'
+            sql = 'INSERT INTO articles (source_site, url, article, create_time) VALUES(%s, %s, %s, %s);'
             self.db_cur.execute(sql, values)
             self.db_conn.commit()
-        except:
+        except Exception as e:
             self.db_conn.commit()
-            msg = ('INSERT MYSQL ERROR: ' + sql) % values
-            self.logger.warn(msg)
+            msg = ('Mysql error: %s. sql: ' + sql) % ((str(e),)+ values)
+            self.logger.warning(msg)
