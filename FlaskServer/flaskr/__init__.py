@@ -1,6 +1,6 @@
-import os
+from typing import Dict
 
-from flask import Flask
+from flask import Flask, g, current_app
 
 
 def create_app():
@@ -13,9 +13,7 @@ def create_app():
     # load the instance config, if it exists, when not testing
     app.config.from_pyfile('config.py', silent=False)
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return app.config['SITES_LIST'][0]
+    from . import cwral
+    app.register_blueprint(cwral.bp)
 
     return app
