@@ -1,6 +1,6 @@
 from typing import Dict
-
-from flask import Flask, g, current_app
+from flaskr.cache import init_cache
+from flask import Flask
 
 
 def create_app():
@@ -15,5 +15,8 @@ def create_app():
 
     from . import cwral
     app.register_blueprint(cwral.bp)
+
+    with app.app_context():
+        init_cache()
 
     return app
