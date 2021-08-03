@@ -1,5 +1,5 @@
 from typing import Dict
-from flaskr.cache import init_cache
+from flaskr.utils import MyCache, MyExecutor
 from flask import Flask
 
 
@@ -17,6 +17,6 @@ def create_app():
     app.register_blueprint(cwral.bp)
 
     with app.app_context():
-        init_cache()
+        MyCache.init_cache()
 
     return app
