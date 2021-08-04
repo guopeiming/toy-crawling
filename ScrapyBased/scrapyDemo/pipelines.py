@@ -6,7 +6,6 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-import json
 import pymysql
 import logging
 
@@ -21,6 +20,8 @@ class MyPipeline:
         args = {'host': host, 'port': port, 'database': database}
         self.logger.info(msg, args)
 
+        self.cached_urls = None
+
     @classmethod
     def from_crawler(cls, crawler):
         host = crawler.settings.get('MYSQL_HOST', 'localhost')
@@ -31,15 +32,16 @@ class MyPipeline:
         return cls(host, port, datebase, user, passwd)
 
     def open_spider(self, spider):
-        pass
+        self.cached_urls = self.__load_urls_cached(spider.get_source_site())
 
     def close_spider(self, spider):
-        self.db_conn.commit()
+        self.db_cur.close()
         self.db_conn.close()
 
     def process_item(self, item, spider):
         item = self._item_cleaning(item)
-        self.insert_db(item)
+        if item['url'] not in self.cached_urls:
+            self.insert_db(item)
         return item
 
     def _item_cleaning(self, item):
@@ -60,6 +62,19 @@ class MyPipeline:
             self.db_cur.execute(sql, values)
             self.db_conn.commit()
         except Exception as e:
-            self.db_conn.commit()
+            self.db_conn.rollback()
             msg = ('Mysql error: %s. sql: ' + sql) % ((str(e),)+ values)
             self.logger.warning(msg)
+
+    def __load_urls_cached(self, source_site):
+        urls = set()
+        try:
+            sql = 'select url FROM articles WHERE source_site = %s'
+            self.db_cur.execute(sql, (source_site, ))
+        except Exception as e:
+            msg = ('Mysql error: %s. sql: ' + sql) % ((str(e), source_site))
+            self.logger.warning(msg)
+        else:
+            for data in self.db_cur.fetchall():
+                urls.add(data['url'])
+        return urls

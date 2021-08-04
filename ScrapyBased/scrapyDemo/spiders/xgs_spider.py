@@ -11,15 +11,20 @@ class XGSSpider(scrapy.Spider):
         'www.iie.cas.cn'
     ]
     start_urls = [
-        'http://www.iie.cas.cn/',
+        'http://www.iie.cas.cn',
     ]
+
+    def __init__(self, name=None, **kwargs):
+        super().__init__(name, **kwargs)
+        self.__source_site = 'http://www.iie.cas.cn'
 
     def parse(self, response: HtmlResponse):
         if response.url.endswith('.html'):
             article = self._parse_article(response)
             if len(article) > 0:
                 yield {
-                    'article': article, 'source_site': 'http://www.iie.cas.cn/',
+                    'article': article,
+                    'source_site': self.source_site,
                     'url': response.url,
                     'create_time': time.strftime('%Y-%m-%d %H:%M:%S')
                 }
@@ -42,3 +47,6 @@ class XGSSpider(scrapy.Spider):
             for span in raw_article:
                 article += span.strip()
         return article
+
+    def get_source_site(self):
+        return self.__source_site
