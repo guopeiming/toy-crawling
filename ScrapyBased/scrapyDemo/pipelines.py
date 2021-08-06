@@ -76,5 +76,7 @@ class MyPipeline:
             self.logger.warning(msg)
         else:
             for data in self.db_cur.fetchall():
-                urls.add(data['url'])
+                urls.add(data[0])
+        msg = 'Loading %d articles from DB.' % (len(urls))
+        self.logger.info(msg)
         return urls

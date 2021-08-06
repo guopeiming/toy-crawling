@@ -24,7 +24,7 @@ class XGSSpider(scrapy.Spider):
             if len(article) > 0:
                 yield {
                     'article': article,
-                    'source_site': self.source_site,
+                    'source_site': self.__source_site,
                     'url': response.url,
                     'create_time': time.strftime('%Y-%m-%d %H:%M:%S')
                 }

@@ -1,5 +1,4 @@
 from typing import Dict
-from flaskr.utils import MyCache, MyExecutor
 from flask import Flask
 
 
@@ -13,10 +12,8 @@ def create_app():
     # load the instance config, if it exists, when not testing
     app.config.from_pyfile('config.py', silent=False)
 
-    from . import cwral
-    app.register_blueprint(cwral.bp)
+    from . import crawl
+    app.register_blueprint(crawl.bp)
 
-    with app.app_context():
-        MyCache.init_cache()
 
     return app
