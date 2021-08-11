@@ -3,8 +3,8 @@ from flaskr.utils import MyDB, MyExecutor
 from flask import request
 import hashlib
 import logging
-from time import sleep
 import time
+import os
 import random
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def crawl():
     ret = dict()
     status = 200
     site = request.args.get('site')
-    if site not in current_app.config['SITES_LIST']:
+    if site not in current_app.config['SITES_DICT']:
         logger.warning('error request args: %s' % str(request.args))
         ret['msg'] = 'error site'
         status = 400
@@ -32,19 +32,25 @@ def crawl():
         hashcode = hashlib.md5(string.encode()).hexdigest()
         ret['id'] = hashcode
         ret['time'] = '5 min'
+
         MyExecutor.init_executor()
-        MyExecutor.submit(crawl_task, site, hashcode)
+        MyExecutor.submit(
+            crawl_task, current_app.config['SCRAPY_PATH'],
+            current_app.config['SITES_DICT'][site], hashcode
+        )
         MyExecutor.shutdown(False)
+
         mydb = MyDB()
         mydb.insert(hashcode, 'crawling')
         mydb.close()
     return ret, status
 
 
-def crawl_task(site, hashcode):
-    sleep(5)
-    print(hashcode, site)
-    print("Task is done!")
+def crawl_task(path, site, hashcode):
+    command = 'cd %s && scrapy crawl %s --logfile=./%s.log -a crawler_id=%s'%(path, site, hashcode, hashcode)
+    print('start crawling. command: '+command)
+    returncode = os.system(command)
+    print('crawling finished. returncode: %d. hashcode: %s.'%(returncode, hashcode))
 
 
 @bp.route('/status')

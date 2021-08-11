@@ -35,6 +35,14 @@ class MyPipeline:
         self.cached_urls = self.__load_urls_cached(spider.get_source_site())
 
     def close_spider(self, spider):
+        sql = 'UPDATE crawlers SET status=%s where crawler_id=%s'
+        values = ('finished', spider.crawler_id)
+        try:
+            self.db_cur.execute(sql, values)
+            self.db_conn.commit()
+        except Exception as e:
+            self.db_conn.rollback()
+            self.logger.warning(('Mysql error: %s. sql: '+sql) % ((str(e), ) + values))
         self.db_cur.close()
         self.db_conn.close()
 
