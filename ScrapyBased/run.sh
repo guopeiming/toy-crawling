@@ -1,1 +1,1 @@
-scrapy crawl xgs --logfile=./output.log
+scrapy crawl rjs --logfile=./output.log

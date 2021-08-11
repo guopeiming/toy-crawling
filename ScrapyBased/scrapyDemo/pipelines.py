@@ -45,6 +45,7 @@ class MyPipeline:
             self.logger.warning(('Mysql error: %s. sql: '+sql) % ((str(e), ) + values))
         self.db_cur.close()
         self.db_conn.close()
+        self.logger.info('Close the connetion to mysql.')
 
     def process_item(self, item, spider):
         item = self._item_cleaning(item)
