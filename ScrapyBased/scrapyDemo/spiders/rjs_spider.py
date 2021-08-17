@@ -16,7 +16,7 @@ class XGSSpider(scrapy.Spider):
 
     def __init__(self, name=None, **kwargs):
         super().__init__(name, **kwargs)
-        self.__source_site = 'http://www.is.cas.cn'
+        self.__source_site = 'www.is.cas.cn'
 
     def parse(self, response: HtmlResponse):
         if response.url.endswith('.html'):

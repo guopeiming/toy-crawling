@@ -17,11 +17,11 @@ def hello():
     return 'hello'
 
 
-@bp.route('/crawl')
-def crawl():
+@bp.route('/crawl/<site>', methods=['GET', 'POST'])
+def crawl(site):
     ret = dict()
     status = 200
-    site = request.args.get('site')
+
     if site not in current_app.config['SITES_DICT']:
         logger.warning('error request args: %s' % str(request.args))
         ret['msg'] = 'error site'
@@ -53,9 +53,8 @@ def crawl_task(path, site, hashcode):
     print('crawling finished. returncode: %d. hashcode: %s.'%(returncode, hashcode))
 
 
-@bp.route('/status')
-def status():
-    id_ = request.args.get('id')
+@bp.route('/status/<id_>', methods=['GET', 'POST'])
+def status(id_):
     mydb = MyDB()
     res = mydb.query(id_)
     mydb.close()

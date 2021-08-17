@@ -1,7 +1,7 @@
 SECRET_KEY = 'dev'
 SITES_DICT = {
-        'http://www.iie.ac.cn': 'xgs',
-        'http://www.is.ac.cn': 'rjs',
+        'www.iie.cas.cn': 'xgs',
+        'www.is.cas.cn': 'rjs',
     }
 ###############################################
 MYSQL_HOST = 'localhost'
