@@ -1,9 +1,9 @@
 # toy-crawling
 a toy crawling project
 
-    - [ ] 基于`beautifulsoup`的爬虫
-    - [x] 基于`scrapy`的爬虫
-    - [x] 基于`flask`的web服务器
+- [ ] 基于`beautifulsoup`的爬虫
+- [x] 基于`scrapy`的爬虫
+- [x] 基于`flask`的web服务器
 
 #
 # 简单说明文档
